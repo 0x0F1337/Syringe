@@ -1,39 +1,101 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static Syringe.Models.Process;
 
 namespace Syringe.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
-        public bool Show32BitProcesses { get; set; } = true;
-        public bool Show64BitProcesses { get; set; } = true;
+        private List<Models.Process> cachedProcesses = new List<Models.Process>();
 
-        public List<Models.Process> AllProcesses { get; set; } = new List<Models.Process>();
+        private bool show32BitProcesses = true;
+        public bool Show32BitProcesses {
+            get
+            {
+                return show32BitProcesses;
+            }
+            set
+            {
+                show32BitProcesses = value;
+                UpdateProcessesLayout(Show64BitProcesses, Show32BitProcesses, NameSearched);
+            }
+        }
 
-        // TODO:
-        // public ICommand Show32BitCommand => new Action();
-
-
-        public MainViewModel(bool show32, bool show64)
+        private bool show64BitProcesses = true;
+        public bool Show64BitProcesses
         {
-            Show32BitProcesses = show32;
-            Show64BitProcesses = show64;
-
-            SetupProcesses(Show32BitProcesses, Show64BitProcesses);
+            get
+            {
+                return show64BitProcesses;
+            }
+            set
+            {
+                show64BitProcesses = value;
+                UpdateProcessesLayout(Show64BitProcesses, Show32BitProcesses, NameSearched);
+            }
         }
 
 
-        private void SetupProcesses(bool show32, bool show64)
+        private string nameSearched = string.Empty;
+        public string NameSearched
         {
-            AllProcesses.Clear();
+            get
+            {
+                return nameSearched;
+            }
+            set
+            {
+                nameSearched = value;
+                UpdateProcessesLayout(Show64BitProcesses, Show32BitProcesses, NameSearched);
+            }
+        }
+
+
+        private List<Models.Process> processes;
+        public List<Models.Process> Processes
+        {
+            get
+            {
+                return processes;
+            }
+            set
+            {
+                processes = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notifies the View when a property in the ViewModel has changed
+        /// </summary>
+        /// <param name="propertyName">Name of the property that has changed</param>
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        public MainViewModel() => InitializeProcesses();
+
+
+        /// <summary>
+        /// Initializes the processes list, caching all current running processes
+        /// </summary>
+        private void InitializeProcesses()
+        {
             Process[] allProcesses = Process.GetProcesses();
 
             for (int i = 0; i < allProcesses.Length; i++)
@@ -47,12 +109,42 @@ namespace Syringe.ViewModels
                     Architecture = IsWow64Process(process)
                 };
 
-                if ((processInfo.Architecture == Architectures.x64 && show64) ||
-                    (processInfo.Architecture == Architectures.x86 && show32))
-                    AllProcesses.Add(processInfo);
+                // Omit invalid processes
+                if (processInfo.Architecture != Architectures.undetermined)
+                    cachedProcesses.Add(processInfo);
             }
 
-            AllProcesses = AllProcesses.OrderBy(x => x.Name).ToList();
+            Processes = cachedProcesses.OrderBy(x => x.Name)
+                                       .ToList();
+        }
+
+
+        /// <summary>
+        /// Updates the Processes property, which is the one used for the layout
+        /// </summary>
+        /// <param name="show64">True if the 64-bit processes will be shown</param>
+        /// <param name="show32">True if the 32-bit processes will be shown</param>
+        /// <param name="nameContains">If given, will show only the processes that their name contain this parameter</param>
+        private void UpdateProcessesLayout(bool show64, bool show32, string nameContains = "")
+        {
+            List<Models.Process> aux = new List<Models.Process>(cachedProcesses);
+
+            if (!show64)
+                aux = aux.Where(x => x.Architecture != Architectures.x64).ToList();
+
+            if (!show32)
+                aux = aux.Where(x => x.Architecture != Architectures.x86).ToList();
+
+            if (nameContains != "")
+            {
+                nameContains = nameContains.ToUpper();
+                aux = aux.Where(x => x.Name.ToUpper().Contains(nameContains)).ToList();
+            }
+
+            // Update only if the processes count has changed
+            if (Processes.Count != aux.Count)
+                Processes = aux.OrderBy(x => x.Name)
+                                .ToList();
         }
 
 

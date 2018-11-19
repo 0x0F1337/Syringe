@@ -22,10 +22,8 @@ namespace Syringe.Views
     public partial class MainWindow : BaseWindow
     {
         public MainWindow()
-        {
+        {            
             InitializeComponent();
-
-            this.DataContext = new MainViewModel(Show32.IsChecked.Value, Show64.IsChecked.Value);
         }
     }
 }
