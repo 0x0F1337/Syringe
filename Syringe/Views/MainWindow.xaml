@@ -36,9 +36,9 @@
 
             <StackPanel Orientation="Horizontal">
                 <Label>DLL Path:</Label>
-                <TextBox Width="500" Margin="10 0 10 0"></TextBox>
-                <Button Padding="10 0 10 0" Margin="0 0 10 0">S</Button>
-                <Button Padding="10 0 10 0">U</Button>
+                <TextBox Name="DllPath" Text="{Binding DllPath}" Width="500" Margin="10 0 10 0" IsReadOnly="True"></TextBox>
+                <Button Name="SearchDll" Click="SearchDll_Click" Padding="10 0 10 0" Margin="0 0 10 0">S</Button>
+                <Button Name="UpdateProcesses" Click="UpdateProcesses_Click" Padding="10 0 10 0">U</Button>
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">

@@ -18,6 +18,9 @@ namespace Syringe.ViewModels
     {
         private List<Models.Process> cachedProcesses = new List<Models.Process>();
 
+        public string DllPath { get; set; }
+
+
         private bool show32BitProcesses = true;
         public bool Show32BitProcesses {
             get
@@ -94,7 +97,7 @@ namespace Syringe.ViewModels
         /// <summary>
         /// Initializes the processes list, caching all current running processes
         /// </summary>
-        private void InitializeProcesses()
+        public void InitializeProcesses()
         {
             Process[] allProcesses = Process.GetProcesses();
 

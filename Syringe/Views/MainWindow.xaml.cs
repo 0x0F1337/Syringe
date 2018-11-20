@@ -1,4 +1,5 @@
-﻿using Syringe.ViewModels;
+﻿using Microsoft.Win32;
+using Syringe.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +22,58 @@ namespace Syringe.Views
     /// </summary>
     public partial class MainWindow : BaseWindow
     {
+        private MainViewModel ViewModel => MainGrid.DataContext as MainViewModel;
+
+
         public MainWindow()
         {            
             InitializeComponent();
+        }
+
+
+        private void SearchDll_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                DllPath.Text = SelectDll();
+            }
+
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+
+
+        private void UpdateProcesses_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ViewModel.InitializeProcesses();
+            }
+
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+
+
+        /// <summary>
+        /// Shows a OpenFileDialog to select a dll
+        /// </summary>
+        /// <returns>Path of the selected DLL or null otherwise</returns>
+        private string SelectDll()
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+
+            dialog.DefaultExt = "*.dll";
+            dialog.Filter = "Dynamic Link Library (*.dll)|*.dll";
+
+            if (dialog.ShowDialog() == true)
+                return dialog.FileName;
+
+            return null;
         }
     }
 }
