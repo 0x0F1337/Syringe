@@ -99,6 +99,8 @@ namespace Syringe.ViewModels
         /// </summary>
         public void InitializeProcesses()
         {
+            cachedProcesses?.Clear();
+
             Process[] allProcesses = Process.GetProcesses();
 
             for (int i = 0; i < allProcesses.Length; i++)
@@ -117,8 +119,7 @@ namespace Syringe.ViewModels
                     cachedProcesses.Add(processInfo);
             }
 
-            Processes = cachedProcesses.OrderBy(x => x.Name)
-                                       .ToList();
+            UpdateProcessesLayout(show64BitProcesses, Show32BitProcesses, NameSearched);
         }
 
 
@@ -145,7 +146,7 @@ namespace Syringe.ViewModels
             }
 
             // Update only if the processes count has changed
-            if (Processes.Count != aux.Count)
+            if (Processes == null || Processes.Count != aux.Count)
                 Processes = aux.OrderBy(x => x.Name)
                                 .ToList();
         }
@@ -170,7 +171,7 @@ namespace Syringe.ViewModels
                 if ((Environment.OSVersion.Version.Major > 5) ||
                    ((Environment.OSVersion.Version.Major == 5) &&
                    (Environment.OSVersion.Version.Minor >= 1)))
-                    result = (IsWow64Process(process.Handle, out bool retValue) && retValue) ? Architectures.x64 : Architectures.x86;
+                    result = !(IsWow64Process(process.Handle, out bool retValue) && retValue) ? Architectures.x64 : Architectures.x86;
             }
 
             // Access to the process was denied

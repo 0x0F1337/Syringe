@@ -11,6 +11,13 @@ namespace Syringe.Views
     public class BaseWindow : Window
     {
         // TODO: Implement proper logging
+        protected void Log(string log)
+        {
+
+        }
+
+
+        // TODO: Implement proper logging
         protected void Error(Exception ex)
         {
             Debug.WriteLine(ex.ToString());

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Win32;
+using Syringe.Bindings;
+using Syringe.Models;
 using Syringe.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -50,6 +52,29 @@ namespace Syringe.Views
             try
             {
                 ViewModel.InitializeProcesses();
+            }
+
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+
+
+        private void InjectDll_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process selectedProcess = ProcessesList.SelectedItem as Process;
+                IntPtr injectedDllAndress = Injector.InjectDll(DllPath.Text, selectedProcess.Name + ".exe");
+
+                if (injectedDllAndress != default(IntPtr))
+                {
+                    string msg = string.Format("\"{0}\" injected correctly at address {1}", DllPath.Text, injectedDllAndress);
+
+                    Log(msg);
+                    MessageBox.Show(msg, "Dll injected", MessageBoxButton.OK);
+                }
             }
 
             catch (Exception ex)
