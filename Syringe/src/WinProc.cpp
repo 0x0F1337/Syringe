@@ -1,4 +1,4 @@
-#include "Processes.h"
+#include "WinProc.h"
 
 
 DWORD GetProcessId(LPSTR processName) {

@@ -119,13 +119,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Injector.cpp" />
-    <ClCompile Include="src\Processes.cpp" />
+    <ClCompile Include="src\WinProc.cpp" />
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Common.h" />
     <ClInclude Include="include\Injector.h" />
-    <ClInclude Include="include\Processes.h" />
+    <ClInclude Include="include\WinProc.h" />
     <ClInclude Include="include\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

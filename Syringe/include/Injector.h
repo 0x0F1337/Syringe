@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include "Processes.h"
+#include "WinProc.h"
 #include "Utils.h"
 
 

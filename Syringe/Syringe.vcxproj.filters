@@ -21,7 +21,7 @@
     <ClCompile Include="src\Utils.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="src\Processes.cpp">
+    <ClCompile Include="src\WinProc.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClInclude Include="include\Utils.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="include\Processes.h">
+    <ClInclude Include="include\WinProc.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
